@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 01 - Questões 1 a 10</title>
+
+<style>
+body{
+margin:0;
+padding:20px;
+font-family:Arial,sans-serif;
+background:#f4f7ff;
+}
+
+.container{
+max-width:950px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 4px 20px rgba(0,0,0,0.15);
+}
+
+.topo{text-align:center;margin-bottom:25px;}
+.topo h1{color:#1f3c88;margin-bottom:10px;}
+.topo p{font-size:20px;font-weight:bold;color:#444;}
+
+.info{
+display:flex;
+justify-content:space-between;
+gap:10px;
+margin-bottom:20px;
+font-size:18px;
+font-weight:bold;
+color:#333;
+}
+
+.card-pergunta{
+background:#dfefff;
+padding:25px;
+border-radius:18px;
+font-size:22px;
+line-height:1.6;
+margin-bottom:25px;
+}
+
+.alternativa{
+width:100%;
+border:none;
+padding:18px;
+margin-bottom:15px;
+border-radius:14px;
+font-size:18px;
+text-align:left;
+cursor:pointer;
+background:#e8fff1;
+}
+
+.alternativa:hover{background:#c8f7da;}
+.correta{background:#98f0ae!important;}
+.errada{background:#ffb8b8!important;}
+
+.comentario{
+display:none;
+background:#ffe5e5;
+border-radius:18px;
+padding:25px;
+margin-top:20px;
+font-size:18px;
+line-height:1.6;
+}
+
+.botoes{
+display:flex;
+gap:12px;
+margin-top:25px;
+}
+
+.nav,.print{
+flex:1;
+border:none;
+padding:15px;
+border-radius:12px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+background:#d9e4ff;
+}
+
+.print{
+background:#ffe9a8;
+}
+
+.legenda{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin-top:28px;
+margin-bottom:14px;
+font-size:16px;
+font-weight:bold;
+}
+
+.item-legenda{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.quadradinho{
+width:22px;
+height:22px;
+border-radius:6px;
+border:1px solid #bbb;
+display:inline-block;
+}
+
+.nao-respondida{background:#eef3ff;}
+.acertou{background:#98f0ae;}
+.errou{background:#ffb8b8;}
+.atual-cor{background:#7fb0ff;}
+
+.grade{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:10px;
+}
+
+.numero{
+padding:15px;
+background:#eef3ff;
+border-radius:12px;
+text-align:center;
+cursor:pointer;
+font-weight:bold;
+font-size:18px;
+border:2px solid transparent;
+}
+
+.numero.certa{background:#98f0ae;}
+.numero.errada{background:#ffb8b8;}
+.numero.atual{
+border:3px solid #1f3c88;
+box-shadow:0 0 0 3px rgba(127,176,255,0.35);
+}
+
+.rodape{
+margin-top:35px;
+text-align:center;
+font-weight:bold;
+color:#444;
+font-size:18px;
+}
+
+.area-impressao{
+display:none;
+}
+
+@media print{
+
+body{
+background:white;
+padding:0;
+}
+
+.container{
+box-shadow:none;
+border-radius:0;
+max-width:100%;
+padding:10px;
+}
+
+.info,
+.card-pergunta,
+#alternativas,
+.comentario,
+.botoes,
+.legenda,
+.grade{
+display:none!important;
+}
+
+.area-impressao{
+display:block;
+}
+
+.questao-print{
+page-break-inside:avoid;
+border:2px solid #000;
+padding:18px;
+margin-bottom:25px;
+font-size:16px;
+line-height:1.5;
+}
+
+.questao-print h3{
+margin-top:0;
+}
+
+.gabarito-print{
+border:1px solid #777;
+padding:12px;
+margin-top:15px;
+background:white;
+}
+
+.topo h1{
+font-size:22px;
+}
+
+.topo p{
+font-size:18px;
+}
+
+.rodape{
+font-size:14px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topo">
+<h1>Curso de Contabilidade Professor Moreira</h1>
+<p>Quiz 01 — Questões 1 a 10</p>
+</div>
+
+<div class="info">
+<div id="numeroQuestao">Questão 1 de 10</div>
+<div id="placar">Acertos: 0 | Erros: 0 | Não respondidas: 10</div>
+</div>
+
+<div class="card-pergunta" id="pergunta"></div>
+
+<div id="alternativas"></div>
+
+<div class="comentario" id="comentario"></div>
+
+<div class="botoes">
+<button class="nav" onclick="voltar()">⬅ Voltar</button>
+<button class="nav" onclick="proxima()">Próxima ➡</button>
+<button class="print" onclick="prepararImpressao()">🖨️ Imprimir PDF</button>
+</div>
+
+<div class="legenda">
+<div class="item-legenda"><span class="quadradinho nao-respondida"></span> Não respondeu</div>
+<div class="item-legenda"><span class="quadradinho acertou"></span> Acertou</div>
+<div class="item-legenda"><span class="quadradinho errou"></span> Errou</div>
+<div class="item-legenda"><span class="quadradinho atual-cor"></span> Questão atual</div>
+</div>
+
+<div class="grade" id="grade"></div>
+
+<div class="area-impressao" id="areaImpressao"></div>
+
+<div class="rodape">
+Curso de Contabilidade Professor Moreira
+</div>
+
+</div>
+
+<script>
+const questoes = [
+{
+pergunta:"Sobre o conceito de perícia contábil segundo a NBC TP 01 (R2), assinale a alternativa correta.",
+alternativas:[
+"a) A perícia contábil consiste apenas na emissão de pareceres administrativos.",
+"b) A perícia contábil é um conjunto de procedimentos técnico-científicos destinados a fornecer elementos probatórios.",
+"c) A perícia contábil pode ser realizada por qualquer profissional da área financeira.",
+"d) A perícia contábil possui finalidade exclusivamente judicial."
+],
+correta:1,
+comentario:"A NBC TP 01 (R2) define a perícia contábil como um conjunto de procedimentos técnico-científicos destinados a fornecer elementos probatórios necessários à solução do litígio."
+},
+{
+pergunta:"Segundo a NBC PP 01 (R2), o perito contábil é:",
+alternativas:[
+"a) qualquer bacharel em contabilidade.",
+"b) o advogado especializado em perícia financeira.",
+"c) o contador regularmente registrado no CRC e detentor de conhecimento técnico-científico.",
+"d) o servidor do Poder Judiciário responsável pelos cálculos."
+],
+correta:2,
+comentario:"O perito contábil é o contador regularmente registrado em CRC e detentor de conhecimento técnico-científico."
+},
+{
+pergunta:"Em relação à competência para realização da perícia contábil, assinale a correta.",
+alternativas:[
+"a) A perícia contábil pode ser realizada por economistas e administradores.",
+"b) A perícia contábil é competência exclusiva de contador regularmente registrado no CRC.",
+"c) O advogado da parte pode assinar laudo pericial contábil.",
+"d) O juiz pode realizar a perícia diretamente."
+],
+correta:1,
+comentario:"A perícia contábil é competência exclusiva de contador em situação regular perante o CRC."
+},
+{
+pergunta:"O assistente técnico é:",
+alternativas:[
+"a) nomeado exclusivamente pelo juiz.",
+"b) escolhido obrigatoriamente pelo Ministério Público.",
+"c) indicado e contratado pela parte.",
+"d) integrante obrigatório do Poder Judiciário."
+],
+correta:2,
+comentario:"O assistente técnico é o contador ou órgão técnico indicado e contratado pela parte interessada."
+},
+{
+pergunta:"A perícia arbitral é exercida:",
+alternativas:[
+"a) sob controle exclusivo do juiz estatal.",
+"b) apenas perante o Tribunal de Contas.",
+"c) sob controle da lei de arbitragem e regulamentos das câmaras arbitrais.",
+"d) somente em processos criminais."
+],
+correta:2,
+comentario:"A perícia arbitral ocorre sob controle da Lei de Arbitragem e dos regulamentos das câmaras arbitrais."
+},
+{
+pergunta:"Sobre o planejamento da perícia, assinale a alternativa correta.",
+alternativas:[
+"a) O planejamento ocorre apenas após o início das diligências.",
+"b) O planejamento serve para estabelecer objetivos, diretrizes, recursos, tempo e metodologia.",
+"c) O planejamento é facultativo.",
+"d) O planejamento somente é necessário em perícias judiciais."
+],
+correta:1,
+comentario:"O planejamento define objetivos, metodologia, recursos, tempo e avaliação de riscos."
+},
+{
+pergunta:"Constitui objetivo do planejamento da perícia:",
+alternativas:[
+"a) substituir o juiz no julgamento.",
+"b) identificar riscos e problemas potenciais.",
+"c) elaborar sentença judicial.",
+"d) dispensar diligências."
+],
+correta:1,
+comentario:"Entre os objetivos do planejamento está a identificação de riscos e problemas potenciais."
+},
+{
+pergunta:"Segundo a NBC PP 01 (R2), o perito deve declarar-se impedido quando:",
+alternativas:[
+"a) desejar aumentar seus honorários.",
+"b) não concordar com o juiz.",
+"c) não puder exercer suas atividades com isenção.",
+"d) a perícia for complexa."
+],
+correta:2,
+comentario:"O perito deve declarar-se impedido sempre que não puder atuar com isenção e independência."
+},
+{
+pergunta:"É hipótese de suspeição do perito:",
+alternativas:[
+"a) possuir conhecimento técnico elevado.",
+"b) ser especialista na matéria.",
+"c) receber presentes de pessoas interessadas na causa.",
+"d) utilizar metodologia científica."
+],
+correta:2,
+comentario:"Receber presentes de pessoas interessadas na causa configura hipótese de suspeição."
+},
+{
+pergunta:"Quando houver negativa de entrega de documentos solicitados em diligência, o perito deve:",
+alternativas:[
+"a) encerrar imediatamente a perícia.",
+"b) destruir os autos.",
+"c) comunicar o fato à autoridade competente.",
+"d) ignorar a ausência documental."
+],
+correta:2,
+comentario:"O perito deve comunicar à autoridade competente eventual recusa de entrega documental."
+}
+];
+
+let atual = 0;
+let respostas = Array(questoes.length).fill(null);
+
+function criarGrade(){
+const grade=document.getElementById("grade");
+grade.innerHTML="";
+questoes.forEach((q,index)=>{
+const div=document.createElement("div");
+div.className="numero";
+div.innerText=index+1;
+div.onclick=()=>{atual=index;carregarQuestao();};
+grade.appendChild(div);
+});
+}
+
+function atualizarPlacar(){
+let acertos=respostas.filter(r=>r===true).length;
+let erros=respostas.filter(r=>r===false).length;
+let nao=respostas.filter(r=>r===null).length;
+document.getElementById("placar").innerText=
+"Acertos: "+acertos+" | Erros: "+erros+" | Não respondidas: "+nao;
+}
+
+function atualizarGrade(){
+const numeros=document.querySelectorAll(".numero");
+numeros.forEach((n,index)=>{
+n.classList.remove("atual","certa","errada");
+if(respostas[index]===true)n.classList.add("certa");
+if(respostas[index]===false)n.classList.add("errada");
+});
+numeros[atual].classList.add("atual");
+}
+
+function carregarQuestao(){
+document.getElementById("numeroQuestao").innerText=
+"Questão "+(atual+1)+" de "+questoes.length;
+
+document.getElementById("pergunta").innerText=questoes[atual].pergunta;
+
+const area=document.getElementById("alternativas");
+area.innerHTML="";
+
+questoes[atual].alternativas.forEach((alt,index)=>{
+const botao=document.createElement("button");
+botao.className="alternativa";
+botao.innerText=alt;
+botao.onclick=()=>responder(index,botao);
+area.appendChild(botao);
+});
+
+document.getElementById("comentario").style.display="none";
+document.getElementById("comentario").innerHTML="";
+
+atualizarPlacar();
+atualizarGrade();
+}
+
+function responder(index,botao){
+const correta=questoes[atual].correta;
+const botoes=document.querySelectorAll(".alternativa");
+
+botoes.forEach((b,i)=>{
+b.disabled=true;
+if(i===correta)b.classList.add("correta");
+});
+
+if(index!==correta){
+botao.classList.add("errada");
+respostas[atual]=false;
+}else{
+respostas[atual]=true;
+}
+
+const comentario=document.getElementById("comentario");
+comentario.style.display="block";
+comentario.innerHTML="<strong>Comentário:</strong><br><br>"+questoes[atual].comentario;
+
+atualizarPlacar();
+atualizarGrade();
+}
+
+function proxima(){
+if(atual<questoes.length-1){
+atual++;
+carregarQuestao();
+}
+}
+
+function voltar(){
+if(atual>0){
+atual--;
+carregarQuestao();
+}
+}
+
+function prepararImpressao(){
+const area=document.getElementById("areaImpressao");
+area.innerHTML="";
+
+questoes.forEach((q,index)=>{
+let html="<div class='questao-print'>";
+html+="<h3>Questão "+(index+1)+"</h3>";
+html+="<p><strong>"+q.pergunta+"</strong></p>";
+
+q.alternativas.forEach(alt=>{
+html+="<p>"+alt+"</p>";
+});
+
+html+="<div class='gabarito-print'>";
+html+="<strong>Gabarito: "+q.alternativas[q.correta].charAt(0).toUpperCase()+"</strong><br><br>";
+html+="<strong>Comentário:</strong><br>"+q.comentario;
+html+="</div>";
+html+="</div>";
+
+area.innerHTML+=html;
+});
+
+window.print();
+}
+
+criarGrade();
+carregarQuestao();
+</script>
+
+</body>
+</html>
